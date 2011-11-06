@@ -1,6 +1,5 @@
 package com.dss.SpaceRace;
 
-import java.awt.Color;
 import java.awt.Graphics;
 
 import javax.swing.JPanel;
@@ -18,11 +17,9 @@ public class Space extends JPanel {
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g); //background color
-		g.setColor(Color.WHITE);
 		spaceship.move(System.currentTimeMillis()-lastPaintTime);
-		g.drawPolyline(spaceship.getXPoints(), spaceship.getYPoints(), spaceship.getNPoints());
+		spaceship.paintComponent(g);
 		lastPaintTime = System.currentTimeMillis();
 		requestFocusInWindow();
-		
 	}
 }
