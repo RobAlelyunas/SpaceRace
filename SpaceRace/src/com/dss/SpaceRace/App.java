@@ -10,6 +10,7 @@ public class App {
 	
 	public static final int MAX_WIDTH = 600;
 	public static final int MAX_HEIGHT = 550;
+	public static final int NUMBER_OF_DIAMONDS = 10;
 	JFrame frame;
 	Space space;
 	
@@ -42,12 +43,16 @@ public class App {
 
 		@Override
 		public void run() {
-			while(true){
+			boolean gameOver = false;
+			while(!gameOver){
 				try {
 				 Thread.sleep(10);
 				}
 				catch(Exception e){}
+				space.moveAll();
+				space.detectCollisions();
 				space.repaint();
+				gameOver = space.detectGameOver();
 				
 			}
 			
