@@ -35,8 +35,8 @@ public class Ship {
 		this.x = x;
 		this.y = y;
 		this.useArrowKeys = useArrowKeys;
-		w = 30;
-		h = 26;
+		w = 38;
+		h = 66;
 		dx = 0;
 		dy = 0;
 		shipImageNoGlow = new ImageIcon(Ship.class.getResource("/images/ship.png")).getImage();
