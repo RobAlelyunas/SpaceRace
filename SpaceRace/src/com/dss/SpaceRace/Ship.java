@@ -15,6 +15,8 @@ public class Ship {
 	private double y;
 	private int w;
 	private int h;
+	private double x2 = 0; // x of reflected ship if it is crossing edge
+	private double y2 = 0; // y of reflected ship if it is crossing edge
 	private double dx; //per sec
 	private double dy; //per sec
     private Image shipImageNoGlow;
@@ -26,6 +28,7 @@ public class Ship {
     private List<Diamond> capturedDiamonds;
     private boolean useArrowKeys;
     private InputControl inputControl;
+    private boolean inCollision;
 	
 	
 	public Ship(double x, double y, boolean useArrowKeys) {
@@ -47,25 +50,41 @@ public class Ship {
 	}
 
 	public void move(long elapsedTime) {
-		double xPower = inputControl.xPower();
-		double yPower = inputControl.yPower();
-		dx = dx + xPower;
-		dy = dy + yPower;
+		if (!isInCollision()) {
+			double xPower = inputControl.xPower();
+			double yPower = inputControl.yPower();
+			dx = dx + xPower;
+			dy = dy + yPower;
+			shipImage = poweredShipImage(xPower,yPower);
+		}
 		x = x+(dx/1000*elapsedTime);
 	    y = y+(dy/1000*elapsedTime);
-	    if(x > App.MAX_WIDTH) {
-	    	x = x-App.MAX_WIDTH;
+	    if(x > Space.MAX_WIDTH) {
+	    	x = x-Space.MAX_WIDTH;
 	    }
 	    if (x<0) {
-	    	x = App.MAX_WIDTH+x;
+	    	x = Space.MAX_WIDTH+x;
 	    }
-	    if (y>App.MAX_HEIGHT) {
-	    	y = y-App.MAX_HEIGHT;
+	    if (y>Space.MAX_HEIGHT) {
+	    	y = y-Space.MAX_HEIGHT;
 	    }
 	    if (y<0) {
-	    	y = App.MAX_HEIGHT+y;
+	    	y = Space.MAX_HEIGHT+y;
 	    }
-	    shipImage = poweredShipImage(xPower,yPower);
+		if ((x+w)>Space.MAX_WIDTH) {
+			x2 = x - Space.MAX_WIDTH;
+		}
+		else {
+			x2 = 0;
+		}
+		if ((y+h)>Space.MAX_HEIGHT) {
+			y2 = y - Space.MAX_HEIGHT;
+		}
+		else {
+			y2 = 0;
+		}
+		if (x2 != 0 && y2 != y) y2 = y;
+		if (y2 != 0 && x2 != x) x2 = x;
 	}
 	
 	private Image poweredShipImage(double xPower, double yPower) {
@@ -92,24 +111,17 @@ public class Ship {
 		
 	public void paintComponent(Graphics g) {
 		g.drawImage(shipImage, (int)x, (int)y, w, h, null);
-		boolean drawSecondShip = false;
-		int x2 = (int)x;
-		int y2 = (int)y;
-		if ((x+w)>App.MAX_WIDTH) {
-			drawSecondShip = true;
-			x2 = x2 - App.MAX_WIDTH;
-		}
-		if ((y+h)>App.MAX_HEIGHT) {
-			drawSecondShip = true;
-			y2 = y2 - App.MAX_HEIGHT;
-		}
-		if (drawSecondShip) {
-			g.drawImage(shipImage, x2, y2, w, h, null);
+		if (x2 != 0 || y2 != 0) {
+			g.drawImage(shipImage, (int)x2, (int)y2, w, h, null);
 		}
 	}
 
 	public Rectangle getRect() {
 		return new Rectangle((int)x,(int)y,w,h);
+	}
+	
+	public Rectangle getRect2() {
+		return new Rectangle((int)x2,(int)y2,w,h);
 	}
 
 	public int getScore() {
@@ -120,5 +132,33 @@ public class Ship {
 		return inputControl;
 	}
 
-	
+	public boolean isOverDiamond(Diamond d) {
+		boolean isOver = getRect().contains(d.getRect());
+		if (!isOver && (x2 != 0 || y2 != 0)) {
+			isOver = getRect2().contains(d.getRect());
+		}
+		return isOver;
+	}
+
+	public boolean isOverShip(Ship s) {
+		boolean isOver = getRect().intersects(s.getRect());
+		if (!isOver && (x2 != 0 || y2 != 0)) {
+			isOver = getRect2().intersects(s.getRect());
+		}
+		return isOver;
+	}
+
+	public void bounce() {
+		dx = -1.2 * dx;
+		dy = -1.2 * dy;
+	}
+
+	public boolean isInCollision() {
+		return inCollision;
+	}
+
+	public void setInCollision(boolean inCollision) {
+		this.inCollision = inCollision;
+	}
+
 }

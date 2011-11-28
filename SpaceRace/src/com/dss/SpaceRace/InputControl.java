@@ -5,7 +5,7 @@ import java.awt.event.KeyListener;
 
 public class InputControl implements KeyListener {
 
-	private static final double POWER = 5;
+	private static final double POWER = 1;
 	
 	private boolean useArrowKeys;
 	private boolean upKeyDown = false;

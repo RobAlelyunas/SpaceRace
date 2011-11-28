@@ -9,10 +9,15 @@ import javax.swing.JPanel;
 
 public class Space extends JPanel {
 	
+	public static final int MAX_WIDTH = 600;
+	public static final int MAX_HEIGHT = 550;
+	public static final int NUMBER_OF_DIAMONDS = 10;
+	
 	private long lastMoveTime;
 	private Ship shipOne;
 	private Ship shipTwo;
 	private List<Diamond> activeDiamonds;
+	private boolean shipsWithinCollision = false;
 	
 	public Space() {
 		shipOne = new Ship(300,225,false);
@@ -31,8 +36,30 @@ public class Space extends JPanel {
 	}
 	
 	public void detectCollisions() {
-		eatAnyDiamonds(shipOne);
-		eatAnyDiamonds(shipTwo);
+		collideShips(shipOne,shipTwo);
+		if (!shipOne.isInCollision()) {
+			eatAnyDiamonds(shipOne);
+		}
+		if (!shipTwo.isInCollision()) {
+			eatAnyDiamonds(shipTwo);
+		}
+	}
+
+	private void collideShips(Ship shipOne, Ship shipTwo) {
+		if (shipOne.isOverShip(shipTwo)) {
+			if (!shipOne.isInCollision()) {
+				shipOne.bounce();
+				shipOne.setInCollision(true);
+			}
+			if (!shipTwo.isInCollision()) {
+				shipTwo.bounce();
+				shipTwo.setInCollision(true);
+			}
+		}
+		else {
+			shipOne.setInCollision(false);
+			shipTwo.setInCollision(false);
+		}
 	}
 
 	public boolean detectGameOver() {
@@ -51,14 +78,14 @@ public class Space extends JPanel {
 		}
 		g.setColor(Color.WHITE);
 		g.drawString(String.valueOf(shipOne.getScore()), 20, 10);
-		g.drawString(String.valueOf(shipTwo.getScore()), App.MAX_WIDTH-10,10);
+		g.drawString(String.valueOf(shipTwo.getScore()), Space.MAX_WIDTH-10,10);
 		requestFocusInWindow();
 	}
 	
 	private void eatAnyDiamonds(Ship ship) {
 		List<Diamond> inactivated = new ArrayList<Diamond>();
 		for (Diamond d : activeDiamonds) {
-			if (ship.getRect().contains(d.getRect())) {
+			if (ship.isOverDiamond(d)) {
 				ship.eat(d);
 				inactivated.add(d);
 			}
@@ -68,9 +95,9 @@ public class Space extends JPanel {
 	
 	private List<Diamond> generateDiamonds() {
 		List<Diamond> diamonds = new ArrayList<Diamond>();
-		for (int i=0;i<App.NUMBER_OF_DIAMONDS;i++) {
-			double x = Math.random() * App.MAX_WIDTH;
-			double y = Math.random() * App.MAX_HEIGHT;
+		for (int i=0;i<Space.NUMBER_OF_DIAMONDS;i++) {
+			double x = Math.random() * Space.MAX_WIDTH;
+			double y = Math.random() * Space.MAX_HEIGHT;
 			Diamond d = new Diamond(x,y);
 			diamonds.add(d);
 		}

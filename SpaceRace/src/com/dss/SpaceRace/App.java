@@ -6,11 +6,8 @@ import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public class App {
-	
-	public static final int MAX_WIDTH = 600;
-	public static final int MAX_HEIGHT = 550;
-	public static final int NUMBER_OF_DIAMONDS = 10;
+public class App { 
+
 	JFrame frame;
 	Space space;
 	
@@ -22,7 +19,7 @@ public class App {
        
         space = new Space();
         space.setBackground(Color.BLACK);
-        space.setPreferredSize(new Dimension(MAX_WIDTH,MAX_HEIGHT));
+        space.setPreferredSize(new Dimension(Space.MAX_WIDTH,Space.MAX_HEIGHT));
         frame.getContentPane().add(space); 
             
 	}
@@ -35,18 +32,18 @@ public class App {
 	private void start() {
 		frame.pack();
 		frame.setVisible(true);
-		Thread t = new Thread(new RepaintThread());
+		Thread t = new Thread(new GameActionThread());
         t.start();
 	}
 	
-	private class RepaintThread implements Runnable {
+	private class GameActionThread implements Runnable {
 
 		@Override
 		public void run() {
 			boolean gameOver = false;
 			while(!gameOver){
 				try {
-				 Thread.sleep(10);
+				 Thread.sleep(4);
 				}
 				catch(Exception e){}
 				space.moveAll();
