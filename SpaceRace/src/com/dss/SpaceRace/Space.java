@@ -9,22 +9,33 @@ import javax.swing.JPanel;
 
 public class Space extends JPanel {
 	
-	public static final int MAX_WIDTH = 600;
-	public static final int MAX_HEIGHT = 550;
-	public static final int NUMBER_OF_DIAMONDS = 10;
+	public static final int MAX_WIDTH = 800;
+	public static final int MAX_HEIGHT = 600;
+	public static final int NUMBER_OF_DIAMONDS = 1;
 	
 	private long lastMoveTime;
 	private Ship shipOne;
 	private Ship shipTwo;
 	private List<Diamond> activeDiamonds;
-	private boolean shipsWithinCollision = false;
+	private boolean shipsWithinCollision = false;	
 	
 	public Space() {
-		shipOne = new Ship(300,225,false);
-		shipTwo = new Ship(250,270,true);
-		activeDiamonds = generateDiamonds();
+		shipOne = new Ship(false);
+		shipTwo = new Ship(true);
+		setBackground(Color.BLACK);		
 		addKeyListener(shipOne.getInputControl());
 		addKeyListener(shipTwo.getInputControl());
+		setUpNewGame();
+	}
+
+	public void setUpNewGame() {
+		shipOne.setX(300);
+		shipOne.setY(225);
+		shipTwo.setX(250);
+		shipTwo.setY(270);
+		shipOne.setUpNewGame();
+		shipTwo.setUpNewGame();
+		activeDiamonds = generateDiamonds();
 		lastMoveTime = System.currentTimeMillis();
 	}
 
@@ -71,11 +82,11 @@ public class Space extends JPanel {
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g); //background color
+		for (Diamond d : activeDiamonds) {
+			d.paintComponent(g);
+	    }
 		shipOne.paintComponent(g);
 		shipTwo.paintComponent(g);
-		for (Diamond d : activeDiamonds) {
-				d.paintComponent(g);
-		}
 		g.setColor(Color.WHITE);
 		g.drawString(String.valueOf(shipOne.getScore()), 20, 10);
 		g.drawString(String.valueOf(shipTwo.getScore()), Space.MAX_WIDTH-10,10);

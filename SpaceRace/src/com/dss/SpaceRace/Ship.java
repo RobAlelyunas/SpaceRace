@@ -31,14 +31,10 @@ public class Ship {
     private boolean inCollision;
 	
 	
-	public Ship(double x, double y, boolean useArrowKeys) {
-		this.x = x;
-		this.y = y;
+	public Ship(boolean useArrowKeys) {
 		this.useArrowKeys = useArrowKeys;
-		w = 38;
-		h = 66;
-		dx = 0;
-		dy = 0;
+		w = 27;
+		h = 27;
 		shipImageNoGlow = new ImageIcon(Ship.class.getResource("/images/ship.png")).getImage();
 		shipImageGT = new ImageIcon(Ship.class.getResource("/images/shipGlowTop.png")).getImage();
 		shipImageGB = new ImageIcon(Ship.class.getResource("/images/shipGlowBottom.png")).getImage();
@@ -47,6 +43,22 @@ public class Ship {
 		shipImage = shipImageNoGlow;
 		capturedDiamonds = new ArrayList<Diamond>();
 		inputControl = new InputControl(useArrowKeys);
+	}
+
+	public double getX() {
+		return x;
+	}
+
+	public void setX(double x) {
+		this.x = x;
+	}
+
+	public double getY() {
+		return y;
+	}
+
+	public void setY(double y) {
+		this.y = y;
 	}
 
 	public void move(long elapsedTime) {
@@ -159,6 +171,12 @@ public class Ship {
 
 	public void setInCollision(boolean inCollision) {
 		this.inCollision = inCollision;
+	}
+
+	public void setUpNewGame() {
+		dx = 0;
+		dy = 0;
+		
 	}
 
 }
